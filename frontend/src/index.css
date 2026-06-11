@@ -143,3 +143,78 @@
     border-radius:15px;
     resize:none;
 }
+/* =========================
+   SMS / URL Toggle Buttons
+========================= */
+
+.toggle-box{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.toggle-box button{
+    padding:12px 24px;
+    border:2px solid #00e5ff;
+    background:transparent;
+    color:white;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:1rem;
+    font-weight:600;
+    transition:all .3s ease;
+}
+
+.toggle-box button:hover{
+    background:rgba(0,229,255,.15);
+}
+
+.toggle-box button.active{
+    background:#00e5ff;
+    color:#111;
+    box-shadow:0 0 8px rgba(0,229,255,.7);
+}
+
+/* =========================
+   URL Input Field
+========================= */
+
+.url-input{
+    width:100%;
+    padding:18px;
+    font-size:1rem;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.05);
+    color:white;
+    outline:none;
+    margin-bottom:15px;
+}
+
+.url-input:focus{
+    border-color:#00e5ff;
+    box-shadow:0 0 12px rgba(0,229,255,.4);
+}
+
+/* Placeholder */
+
+.url-input::placeholder,
+.analyzer-box textarea::placeholder{
+    color:#bdbdbd;
+}
+
+/* Responsive */
+
+@media(max-width:600px){
+
+    .toggle-box{
+        flex-direction:column;
+        width:100%;
+    }
+
+    .toggle-box button{
+        width:100%;
+    }
+}

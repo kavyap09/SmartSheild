@@ -10,7 +10,7 @@ const Hero = () => {
       </h1>
 
       <p className="subtitle">
-        SMS Phishing Detection System
+        SMS & URL Phishing Detection System
       </p>
 
       <p className="desc">
@@ -24,17 +24,22 @@ const Hero = () => {
       </button>
      </a>
 
-      <div className="stats">
-        <div>
-          <h3>12+</h3>
-          <p>Threat Patterns</p>
-        </div>
-        <div>
-          <h3>Real-time</h3>
-          <p>Detection</p>
-        </div>
-       
-      </div>
+    <div className="stats">
+  <div>
+    <h3>SMS</h3>
+    <p>Phishing Detection</p>
+  </div>
+
+  <div>
+    <h3>URL</h3>
+    <p>Threat Analysis</p>
+  </div>
+
+  <div>
+    <h3>Real-Time</h3>
+    <p>Security Alerts</p>
+  </div>
+</div>
     </section>
   );
 };

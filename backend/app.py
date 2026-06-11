@@ -1,12 +1,27 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
+import pickle
+import pandas as pd
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 CORS(app)
 
-# Load trained model
+# =========================
+# LOAD MODELS
+# =========================
+
+# SMS phishing model
 model = joblib.load("sms_phishing_model.pkl")
+
+# URL phishing model
+with open("url_phish_smart.pkl", "rb") as f:
+    url_model = pickle.load(f)
+
+# =========================
+# SMS KEYWORDS
+# =========================
 
 phishing_words = {
     "bank": 5,
@@ -33,10 +48,88 @@ phishing_words = {
     "offer": 5
 }
 
+# =========================
+# URL FEATURE EXTRACTION
+# =========================
+
+def extract_features(url):
+    parsed = urlparse(url)
+    hostname = parsed.netloc.lower()
+
+    return {
+        "url_length": len(url),
+        "num_dots": hostname.count("."),
+        "has_https": int("https" in url),
+        "has_at": int("@" in url),
+        "has_hyphen": int("-" in hostname),
+        "num_digits": sum(c.isdigit() for c in url),
+        "has_login": int("login" in url.lower()),
+    }
+
+# =========================
+# ANALYZE API
+# =========================
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
     data = request.json
+
+    detection_type = data.get("type", "sms")
+
+    # ====================================
+    # URL PHISHING DETECTION
+    # ====================================
+
+    if detection_type == "url":
+
+        url = data.get("url", "")
+
+        if not url:
+            return jsonify({
+                "error": "URL is required"
+            }), 400
+
+        features = extract_features(url)
+
+        df_test = pd.DataFrame([features])
+
+        prediction = url_model.predict(df_test)[0]
+
+        confidence = float(
+            url_model.predict_proba(df_test)[0][1] * 100
+        )
+
+        if prediction == 1:
+
+            status = "UNSAFE"
+            risk_level = "HIGH"
+
+            recommendation = (
+                "This URL appears to be a phishing website. "
+                "Avoid opening it or entering personal information."
+            )
+
+        else:
+
+            status = "SAFE"
+            risk_level = "LOW"
+
+            recommendation = (
+                "This URL appears to be safe."
+            )
+
+        return jsonify({
+            "status": status,
+            "suspicionRate": round(confidence, 2),
+            "riskLevel": risk_level,
+            "keywords": [],
+            "recommendation": recommendation
+        })
+
+    # ====================================
+    # SMS PHISHING DETECTION
+    # ====================================
 
     message = data.get("message", "")
 
@@ -72,30 +165,46 @@ def analyze():
     )
 
     if final_score < 40:
+
         status = "SAFE"
         risk_level = "LOW"
-        recommendation = "Message appears legitimate."
+
+        recommendation = (
+            "Message appears legitimate."
+        )
 
     elif final_score < 70:
 
         status = "SUSPICIOUS"
         risk_level = "MEDIUM"
-        recommendation = "Verify sender before responding."
+
+        recommendation = (
+            "Verify sender before responding."
+        )
+
     else:
 
         status = "UNSAFE"
         risk_level = "HIGH"
-        recommendation = "Avoid clicking links or sharing personal information."
+
+        recommendation = (
+            "Avoid clicking links or sharing personal information."
+        )
+
     return jsonify({
 
-    "status": status,
-    "suspicionRate": round(final_score, 2),
-    "riskLevel": risk_level,
-    "keywords": matched_keywords,
-    "recommendation": recommendation
+        "status": status,
+        "suspicionRate": round(final_score, 2),
+        "riskLevel": risk_level,
+        "keywords": matched_keywords,
+        "recommendation": recommendation
 
     })
 
+
+# =========================
+# RUN SERVER
+# =========================
 
 if __name__ == "__main__":
     app.run(
