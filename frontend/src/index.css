@@ -1,0 +1,145 @@
+.scan-result{
+    margin:30px auto;
+    padding:22px;
+    border-radius:18px;
+    color:white;
+    text-align:left;
+
+    width:90%;
+    max-width:520px;
+
+    animation:fadeIn .4s ease;
+}
+
+/* SAFE */
+
+.scan-result.safe{
+    background:rgba(34,197,94,.15);
+    border:2px solid #22c55e;
+}
+
+/* SUSPICIOUS */
+
+.scan-result.suspicious{
+    background:rgba(250,204,21,.12);
+    border:2px solid #facc15;
+}
+
+/* UNSAFE */
+
+.scan-result.unsafe{
+    background:rgba(239,68,68,.15);
+    border:2px solid #ef4444;
+}
+
+.scan-status{
+    font-size:1.4rem;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:18px;
+}
+
+.scan-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.scan-item{
+    background:rgba(255,255,255,.08);
+    padding:12px;
+    border-radius:12px;
+}
+
+.label{
+    display:block;
+    color:#d1d5db;
+    font-size:.85rem;
+    margin-bottom:4px;
+}
+
+.value{
+    font-size:1.1rem;
+    font-weight:700;
+}
+
+.keywords-box{
+    margin-top:15px;
+}
+
+.keywords-box h4,
+.recommendation-box h4{
+    margin-bottom:10px;
+    font-size:1rem;
+}
+
+.keyword-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.keyword-pill{
+    padding:6px 12px;
+    border-radius:20px;
+    background:rgba(255,255,255,.1);
+    font-size:.85rem;
+}
+
+.safe-pill{
+    background:#16a34a;
+}
+
+.recommendation-box{
+    margin-top:18px;
+    padding:12px;
+    border-radius:12px;
+    background:rgba(255,255,255,.08);
+}
+
+.recommendation-box p{
+    margin:0;
+    line-height:1.5;
+}
+
+@media(max-width:600px){
+
+    .scan-result{
+        width:95%;
+        max-width:95%;
+    }
+
+    .scan-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+.analyzer{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.analyzer-box{
+    width:100%;
+    max-width:1000px;
+}
+.analyzer-box textarea{
+    width:100%;
+    min-height:220px;   /* increase height */
+    padding:18px;
+    font-size:1rem;
+    border-radius:15px;
+    resize:none;
+}
