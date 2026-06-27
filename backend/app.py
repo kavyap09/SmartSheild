@@ -8,20 +8,9 @@ from urllib.parse import urlparse
 app = Flask(__name__)
 CORS(app)
 
-# =========================
-# LOAD MODELS
-# =========================
-
-# SMS phishing model
 model = joblib.load("sms_phishing_model.pkl")
-
-# URL phishing model
 with open("url_phish_smart.pkl", "rb") as f:
     url_model = pickle.load(f)
-
-# =========================
-# SMS KEYWORDS
-# =========================
 
 phishing_words = {
     "bank": 5,
@@ -47,11 +36,7 @@ phishing_words = {
     "cash": 5,
     "offer": 5
 }
-
-# =========================
 # URL FEATURE EXTRACTION
-# =========================
-
 def extract_features(url):
     parsed = urlparse(url)
     hostname = parsed.netloc.lower()
@@ -66,23 +51,15 @@ def extract_features(url):
         "has_login": int("login" in url.lower()),
     }
 
-# =========================
-# ANALYZE API
-# =========================
 
+# ANALYZE API
 @app.route("/analyze", methods=["POST"])
 def analyze():
 
     data = request.json
 
     detection_type = data.get("type", "sms")
-
-    # ====================================
-    # URL PHISHING DETECTION
-    # ====================================
-
     if detection_type == "url":
-
         url = data.get("url", "")
 
         if not url:
@@ -126,11 +103,6 @@ def analyze():
             "keywords": [],
             "recommendation": recommendation
         })
-
-    # ====================================
-    # SMS PHISHING DETECTION
-    # ====================================
-
     message = data.get("message", "")
 
     if not message:
@@ -201,10 +173,6 @@ def analyze():
 
     })
 
-
-# =========================
-# RUN SERVER
-# =========================
 
 if __name__ == "__main__":
     app.run(
